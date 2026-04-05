@@ -325,4 +325,38 @@ if (!isMobile) {
     // لو كنتِ ضايفة الكلاس اللي بيخفي الكرسور في الـ Dynamic CSS شيليه
 }
 
- 
+ /* ── Inject dynamic CSS (Updated) ── */
+const s = document.createElement('style');
+// نتحقق إذا كان المستخدم على كمبيوتر (شاشة أكبر من 991px)
+const isDesktop = window.innerWidth > 991;
+
+s.textContent = `
+    /* إخفاء الكرسور الأصلي فقط في الديسكتوب */
+    ${isDesktop ? '* { cursor: none !important; }' : ''}
+
+    #cur {
+        position: fixed; width: 11px; height: 11px;
+        background: #1a1a1a; border-radius: 50%;
+        pointer-events: none; z-index: 999999;
+        transform: translate(-50%,-50%);
+        transition: width .12s ease, height .12s ease, background .12s ease;
+        mix-blend-mode: difference;
+        /* إخفاء عنصر الكرسور المخصص تماماً في الموبايل */
+        display: ${isDesktop ? 'block' : 'none'} !important;
+    }
+
+    body.on-dark #cur { background: #f5f1ea; }
+    #cur.h { width: 18px; height: 18px; }
+    #cur.c { width: 7px;  height: 7px;  }
+
+    #pb {
+        position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+        background: linear-gradient(90deg,#ffeb00,#ff4d4d 55%,#a78bfa);
+        z-index: 9999; pointer-events: none; transition: width .06s linear;
+    }
+
+    .nav-shrunk { box-shadow: 0 3px 16px rgba(0,0,0,.09); }
+    .nav-shrunk .nav-container { padding-top: 8px !important; padding-bottom: 8px !important; }
+    .nav-active { color: #ff4d4d !important; }
+`;
+document.head.appendChild(s);
