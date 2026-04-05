@@ -298,3 +298,31 @@ menuBtn.addEventListener('click', () => {
         overlay.classList.remove('active');
     });
 });
+
+/* ── 1. CURSOR ── */
+const isMobile = window.matchMedia("(max-width: 991px)").matches;
+
+if (!isMobile) {
+    const cur = document.createElement('div'); 
+    cur.id = 'cur';
+    document.body.appendChild(cur);
+
+    document.addEventListener('mousemove', e => {
+        cur.style.left = e.clientX + 'px';
+        cur.style.top  = e.clientY + 'px';
+    }, { passive: true });
+
+    document.querySelectorAll('a,button,.nav-item-mini,.mockup-frame,.logo-box,.service-row,.contact-card-link,.p-card,.thumb-box').forEach(el => {
+        el.addEventListener('mouseenter', () => cur.classList.add('h'));
+        el.addEventListener('mouseleave', () => cur.classList.remove('h'));
+    });
+    
+    document.addEventListener('mousedown', () => cur.classList.add('c'));
+    document.addEventListener('mouseup',   () => cur.classList.remove('c'));
+} else {
+    // لو موبايل، نتأكد إن الكرسور العادي شغال ومفيش Cursor None
+    document.documentElement.style.cursor = 'auto';
+    // لو كنتِ ضايفة الكلاس اللي بيخفي الكرسور في الـ Dynamic CSS شيليه
+}
+
+ 

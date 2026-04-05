@@ -815,3 +815,13 @@ body {
     transition: box-shadow 0.3s ease;
     width: 100%; /* العرض كامل الشاشة */
 }
+
+/* إخفاء الكرسور المخصص في الموبايل والتابلت */
+@media (max-width: 991px) {
+    #cur {
+        display: none !important;
+    }
+    * {
+        cursor: auto !important; /* إرجاع الكرسور العادي للموبايل */
+    }
+}
