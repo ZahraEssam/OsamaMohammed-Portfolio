@@ -1,13 +1,15 @@
 /* ============================================
-   OSAMA MOHAMED — PORTFOLIO JS (CLEAN v7)
+   OSAMA MOHAMED — PORTFOLIO JS (CLEAN v8)
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
 
     /* ── Inject dynamic CSS ── */
     const s = document.createElement('style');
+    const isDesktop = window.innerWidth > 991;
     s.textContent = `
-    * { cursor: none !important; }
+    ${isDesktop ? '* { cursor: none !important; }' : ''}
+
     #cur {
         position: fixed; width: 11px; height: 11px;
         background: #1a1a1a; border-radius: 50%;
@@ -15,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         transform: translate(-50%,-50%);
         transition: width .12s ease, height .12s ease, background .12s ease;
         mix-blend-mode: difference;
+        display: ${isDesktop ? 'block' : 'none'} !important;
     }
     body.on-dark #cur { background: #f5f1ea; }
     #cur.h { width: 18px; height: 18px; }
@@ -62,22 +65,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(s);
 
 
-    /* ── 1. CURSOR ── */
-    const cur = document.createElement('div'); cur.id = 'cur';
-    document.body.appendChild(cur);
-    document.querySelectorAll('.cursor-glow').forEach(e => e.remove());
+    /* ── 1. CURSOR (desktop only) ── */
+    if (isDesktop) {
+        const cur = document.createElement('div'); cur.id = 'cur';
+        document.body.appendChild(cur);
+        document.querySelectorAll('.cursor-glow').forEach(e => e.remove());
 
-    document.addEventListener('mousemove', e => {
-        cur.style.left = e.clientX + 'px';
-        cur.style.top  = e.clientY + 'px';
-    }, { passive: true });
+        document.addEventListener('mousemove', e => {
+            cur.style.left = e.clientX + 'px';
+            cur.style.top  = e.clientY + 'px';
+        }, { passive: true });
 
-    document.querySelectorAll('a,button,.nav-item-mini,.mockup-frame,.logo-box,.service-row,.contact-card-link,.p-card,.thumb-box').forEach(el => {
-        el.addEventListener('mouseenter', () => cur.classList.add('h'));
-        el.addEventListener('mouseleave', () => cur.classList.remove('h'));
-    });
-    document.addEventListener('mousedown', () => cur.classList.add('c'));
-    document.addEventListener('mouseup',   () => cur.classList.remove('c'));
+        document.querySelectorAll('a,button,.nav-item-mini,.mockup-frame,.logo-box,.service-row,.contact-card-link,.p-card,.thumb-box').forEach(el => {
+            el.addEventListener('mouseenter', () => cur.classList.add('h'));
+            el.addEventListener('mouseleave', () => cur.classList.remove('h'));
+        });
+        document.addEventListener('mousedown', () => cur.classList.add('c'));
+        document.addEventListener('mouseup',   () => cur.classList.remove('c'));
+    }
 
 
     /* ── 2. PROGRESS BAR ── */
@@ -167,14 +172,14 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             target.classList.add('sf');
             setTimeout(() => target.classList.remove('sf'), 550);
-            window.scrollTo({ top: target.offsetTop - 65, behavior: 'smooth' });
+            window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
         });
     });
 
 
     /* ── 7. HERO PARALLAX ── */
     const heroImg = document.querySelector('.image-frame img');
-    if (heroImg) {
+    if (heroImg && isDesktop) {
         let pTick = false;
         window.addEventListener('scroll', () => {
             if (!pTick) {
@@ -242,7 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.getElementById('navLinks');
 
     if (menuBtn && navLinks) {
-        // Create overlay element
         const overlay = document.createElement('div');
         overlay.className = 'nav-overlay';
         document.body.appendChild(overlay);
@@ -269,94 +273,31 @@ document.addEventListener('DOMContentLoaded', () => {
             menuBtn.style.borderColor = '#000';
         };
 
-        menuBtn.addEventListener('click', () => {
+        menuBtn.addEventListener('click', e => {
+            e.stopPropagation();
             navLinks.classList.contains('active') ? closeMenu() : openMenu();
         });
 
         overlay.addEventListener('click', closeMenu);
 
+        /* Close on any link click */
         navLinks.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', closeMenu);
         });
+
+        /* Close on Escape key */
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && navLinks.classList.contains('active')) closeMenu();
+        });
+
+        /* Close when clicking outside menu on mobile (touch outside) */
+        document.addEventListener('touchstart', e => {
+            if (
+                navLinks.classList.contains('active') &&
+                !navLinks.contains(e.target) &&
+                !menuBtn.contains(e.target)
+            ) closeMenu();
+        }, { passive: true });
     }
 
 });
-
-const menuBtn = document.querySelector('.mobile-menu-btn');
-const navLinks = document.querySelector('.nav-links');
-const overlay = document.querySelector('.nav-overlay');
-
-menuBtn.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
-    overlay.classList.toggle('active');
-});
-
-// إغلاق المنيو عند الضغط على أي رابط أو على الـ Overlay
-[overlay, ...document.querySelectorAll('.nav-links a')].forEach(el => {
-    el.addEventListener('click', () => {
-        navLinks.classList.remove('active');
-        overlay.classList.remove('active');
-    });
-});
-
-/* ── 1. CURSOR ── */
-const isMobile = window.matchMedia("(max-width: 991px)").matches;
-
-if (!isMobile) {
-    const cur = document.createElement('div'); 
-    cur.id = 'cur';
-    document.body.appendChild(cur);
-
-    document.addEventListener('mousemove', e => {
-        cur.style.left = e.clientX + 'px';
-        cur.style.top  = e.clientY + 'px';
-    }, { passive: true });
-
-    document.querySelectorAll('a,button,.nav-item-mini,.mockup-frame,.logo-box,.service-row,.contact-card-link,.p-card,.thumb-box').forEach(el => {
-        el.addEventListener('mouseenter', () => cur.classList.add('h'));
-        el.addEventListener('mouseleave', () => cur.classList.remove('h'));
-    });
-    
-    document.addEventListener('mousedown', () => cur.classList.add('c'));
-    document.addEventListener('mouseup',   () => cur.classList.remove('c'));
-} else {
-    // لو موبايل، نتأكد إن الكرسور العادي شغال ومفيش Cursor None
-    document.documentElement.style.cursor = 'auto';
-    // لو كنتِ ضايفة الكلاس اللي بيخفي الكرسور في الـ Dynamic CSS شيليه
-}
-
- /* ── Inject dynamic CSS (Updated) ── */
-const s = document.createElement('style');
-// نتحقق إذا كان المستخدم على كمبيوتر (شاشة أكبر من 991px)
-const isDesktop = window.innerWidth > 991;
-
-s.textContent = `
-    /* إخفاء الكرسور الأصلي فقط في الديسكتوب */
-    ${isDesktop ? '* { cursor: none !important; }' : ''}
-
-    #cur {
-        position: fixed; width: 11px; height: 11px;
-        background: #1a1a1a; border-radius: 50%;
-        pointer-events: none; z-index: 999999;
-        transform: translate(-50%,-50%);
-        transition: width .12s ease, height .12s ease, background .12s ease;
-        mix-blend-mode: difference;
-        /* إخفاء عنصر الكرسور المخصص تماماً في الموبايل */
-        display: ${isDesktop ? 'block' : 'none'} !important;
-    }
-
-    body.on-dark #cur { background: #f5f1ea; }
-    #cur.h { width: 18px; height: 18px; }
-    #cur.c { width: 7px;  height: 7px;  }
-
-    #pb {
-        position: fixed; top: 0; left: 0; height: 3px; width: 0%;
-        background: linear-gradient(90deg,#ffeb00,#ff4d4d 55%,#a78bfa);
-        z-index: 9999; pointer-events: none; transition: width .06s linear;
-    }
-
-    .nav-shrunk { box-shadow: 0 3px 16px rgba(0,0,0,.09); }
-    .nav-shrunk .nav-container { padding-top: 8px !important; padding-bottom: 8px !important; }
-    .nav-active { color: #ff4d4d !important; }
-`;
-document.head.appendChild(s);
