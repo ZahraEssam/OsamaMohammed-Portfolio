@@ -7,8 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ── Inject dynamic CSS ── */
     const s = document.createElement('style');
     const isDesktop = window.innerWidth > 991;
+    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
     s.textContent = `
-    ${isDesktop ? '* { cursor: none !important; }' : ''}
+    ${(isDesktop && !isTouch) ? '* { cursor: none !important; }' : '* { cursor: auto !important; }'}
 
     #cur {
         position: fixed; width: 11px; height: 11px;
@@ -17,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         transform: translate(-50%,-50%);
         transition: width .12s ease, height .12s ease, background .12s ease;
         mix-blend-mode: difference;
-        display: ${isDesktop ? 'block' : 'none'} !important;
+        display: ${(isDesktop && !isTouch) ? 'block' : 'none'} !important;
     }
     body.on-dark #cur { background: #f5f1ea; }
     #cur.h { width: 18px; height: 18px; }
@@ -65,8 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(s);
 
 
-    /* ── 1. CURSOR (desktop only) ── */
-    if (isDesktop) {
+    /* ── 1. CURSOR (desktop non-touch only) ── */
+    if (isDesktop && !isTouch) {
         const cur = document.createElement('div'); cur.id = 'cur';
         document.body.appendChild(cur);
         document.querySelectorAll('.cursor-glow').forEach(e => e.remove());
